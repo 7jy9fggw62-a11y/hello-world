@@ -1,0 +1,50 @@
+ScriptProcessorNode.js
+
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+
+// match CSS size (ensure your HTML/CSS set the canvas display size to 800x600)
+canvas.width = 800;
+canvas.height = 600;
+
+const player = { x: 400, y: 300, w: 32, h: 32, speed: 200 };
+const keys = {};
+index.html
+
+window.addEventListener('keydown', e => { keys[e.key] = true; });
+window.addEventListener('keyup', e => { keys[e.key] = false; });
+
+let last = performance.now();
+function loop(now) {
+  const dt = (now - last) / 1000;
+  last = now;
+  update(dt);
+  draw();
+  requestAnimationFrame(loop);
+}
+
+function update(dt) {
+  if (keys.ArrowLeft || keys.a)  player.x -= player.speed * dt;
+  if (keys.ArrowRight|| keys.d)  player.x += player.speed * dt;
+  if (keys.ArrowUp   || keys.w)  player.y -= player.speed * dt;
+  if (keys.ArrowDown || keys.s)  player.y += player.speed * dt;
+
+  // clamp to canvas
+  player.x = Math.max(0, Math.min(canvas.width - player.w, player.x));
+  player.y = Math.max(0, Math.min(canvas.height - player.h, player.y));
+}
+
+function draw() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  // player
+  ctx.fillStyle = '#4ee';
+  ctx.fillRect(player.x, player.y, player.w, player.h);
+
+  // simple HUD
+  ctx.fillStyle = '#ff0000ff';
+  ctx.font = '14px monospace';
+  ctx.fillText('Use arrow keys or WASD to move', 10, 20);
+}
+
+requestAnimationFrame(loop);
